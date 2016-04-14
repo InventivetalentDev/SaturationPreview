@@ -45,19 +45,17 @@ public class PreviewTask extends BukkitRunnable {
 	}
 
 	void sendActualPacket() {
-		try {
-			sendPacket(PacketPlayOutUpdateHealthConstructorResolver.resolveLastConstructorSilent().newInstance(CraftPlayerMethodResolver.resolveWrapper("getScaledHealth").invokeSilent(player), Math.min(actualLevel, 20), player.getSaturation()));
-		} catch (ReflectiveOperationException e) {
-			throw new RuntimeException(e);
-		}
+		sendPacket(PacketPlayOutUpdateHealthConstructorResolver.resolveWrapper(new Class[] {
+				float.class,
+				int.class,
+				float.class }).newInstance(CraftPlayerMethodResolver.resolveWrapper("getScaledHealth").invokeSilent(player), Math.min(actualLevel, 20), player.getSaturation()));
 	}
 
 	void sendPreviewPacket() {
-		try {
-			sendPacket(PacketPlayOutUpdateHealthConstructorResolver.resolveLastConstructorSilent().newInstance(CraftPlayerMethodResolver.resolveWrapper("getScaledHealth").invokeSilent(player), Math.min(actualLevel + previewLevel, 20), player.getSaturation()));
-		} catch (ReflectiveOperationException e) {
-			throw new RuntimeException(e);
-		}
+		sendPacket(PacketPlayOutUpdateHealthConstructorResolver.resolveWrapper(new Class[] {
+				float.class,
+				int.class,
+				float.class }).newInstance(CraftPlayerMethodResolver.resolveWrapper("getScaledHealth").invokeSilent(player), Math.min(actualLevel + previewLevel, 20), player.getSaturation()));
 	}
 
 	void sendPacket(Object packet) {
