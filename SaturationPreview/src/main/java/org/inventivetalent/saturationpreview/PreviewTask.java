@@ -1,6 +1,7 @@
 package org.inventivetalent.saturationpreview;
 
 import org.bukkit.GameMode;
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.inventivetalent.reflection.minecraft.Minecraft;
@@ -40,6 +41,9 @@ public class PreviewTask extends BukkitRunnable {
 			cancel();
 		}
 		if (player.getGameMode() != GameMode.SURVIVAL && player.getGameMode() != GameMode.ADVENTURE) {
+			cancel();
+		}
+		if (player.getItemInHand() == null || player.getItemInHand().getType() == Material.AIR || player.getItemInHand().getAmount() <= 0) {
 			cancel();
 		}
 	}
