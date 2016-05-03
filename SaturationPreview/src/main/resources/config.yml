@@ -1,0 +1,2 @@
+# Apply a slowness effect to players attempting to sprint without enough food
+applySlowness: true

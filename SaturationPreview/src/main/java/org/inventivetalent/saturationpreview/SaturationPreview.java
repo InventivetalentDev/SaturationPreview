@@ -7,8 +7,12 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerItemHeldEvent;
+import org.bukkit.event.player.PlayerToggleSprintEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
+import org.inventivetalent.pluginannotations.config.ConfigValue;
 import org.inventivetalent.pluginannotations.description.Author;
 import org.inventivetalent.pluginannotations.description.Plugin;
 import org.inventivetalent.reflection.resolver.ConstructorResolver;
@@ -50,6 +54,8 @@ public class SaturationPreview extends JavaPlugin implements Listener {
 
 	Map<UUID, PreviewTask> previewTaskMap = new HashMap<>();
 
+	@ConfigValue(path = "applySlowness") boolean applySlowness = true;
+
 	@Override
 	public void onEnable() {
 		Bukkit.getPluginManager().registerEvents(this, this);
@@ -73,6 +79,18 @@ public class SaturationPreview extends JavaPlugin implements Listener {
 			Object nmsItem = ItemStackMethodResolver.resolveWrapper("getItem").invokeSilent(nmsItemStack);
 			if (ItemFood.isAssignableFrom(nmsItem.getClass())) {
 				startTask(event.getPlayer(), (int) ItemFoodMethodResolver.resolveWrapper("getNutrition").invokeSilent(nmsItem, nmsItemStack));
+			}
+		}
+	}
+
+	@EventHandler
+	public void on(PlayerToggleSprintEvent event) {
+		if (event.getPlayer().getFoodLevel() < 6) {
+			if (previewTaskMap.containsKey(event.getPlayer().getUniqueId())) {
+				event.getPlayer().setSprinting(false);
+				if (applySlowness) {
+					event.getPlayer().addPotionEffect(new PotionEffect(PotionEffectType.SLOW, 15, 2, false, false));
+				}
 			}
 		}
 	}
