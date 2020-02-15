@@ -35,7 +35,7 @@ public class SaturationPreview extends JavaPlugin implements Listener {
 
 	static Class<?> ItemStack                 = nmsClassResolver.resolveSilent("ItemStack");
 	static Class<?> Item                      = nmsClassResolver.resolveSilent("Item");
-	static Class<?> ItemFood                  = nmsClassResolver.resolveSilent("ItemFood");
+	static Class<?> FoodInfo                  = nmsClassResolver.resolveSilent("FoodInfo");
 	static Class<?> EntityPlayer              = nmsClassResolver.resolveSilent("EntityPlayer");
 	static Class<?> PlayerConnection          = nmsClassResolver.resolveSilent("PlayerConnection");
 	static Class<?> PacketPlayOutUpdateHealth = nmsClassResolver.resolveSilent("PacketPlayOutUpdateHealth");
@@ -45,7 +45,8 @@ public class SaturationPreview extends JavaPlugin implements Listener {
 	static MethodResolver CraftItemStackMethodResolver   = new MethodResolver(CraftItemStack);
 	static MethodResolver CraftPlayerMethodResolver      = new MethodResolver(CraftPlayer);
 	static MethodResolver ItemStackMethodResolver        = new MethodResolver(ItemStack);
-	static MethodResolver ItemFoodMethodResolver         = new MethodResolver(ItemFood);
+	static MethodResolver ItemMethodResolver             = new MethodResolver(Item);
+	static MethodResolver FoodInfoMethodResolver         = new MethodResolver(FoodInfo);
 	static MethodResolver PlayerConnectionMethodResolver = new MethodResolver(PlayerConnection);
 
 	static FieldResolver EntityPlayerFieldResolver = new FieldResolver(EntityPlayer);
@@ -77,8 +78,9 @@ public class SaturationPreview extends JavaPlugin implements Listener {
 		if (itemStack != null && itemStack.getAmount() > 0 && itemStack.getType() != Material.AIR) {
 			Object nmsItemStack = CraftItemStackMethodResolver.resolveWrapper("asNMSCopy").invokeSilent(null, itemStack);
 			Object nmsItem = ItemStackMethodResolver.resolveWrapper("getItem").invokeSilent(nmsItemStack);
-			if (ItemFood.isAssignableFrom(nmsItem.getClass())) {
-				startTask(event.getPlayer(), (int) ItemFoodMethodResolver.resolveWrapper("getNutrition").invokeSilent(nmsItem, nmsItemStack));
+			Object foodInfo = ItemMethodResolver.resolveWrapper("getFoodInfo").invokeSilent(nmsItem);
+			if (foodInfo != null) {
+				startTask(event.getPlayer(), (int) FoodInfoMethodResolver.resolveWrapper("getNutrition", "a").invokeSilent(foodInfo));
 			}
 		}
 	}
