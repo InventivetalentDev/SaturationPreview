@@ -1,5 +1,6 @@
 package org.inventivetalent.saturationpreview;
 
+import org.bstats.bukkit.Metrics;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -20,7 +21,6 @@ import org.inventivetalent.reflection.resolver.FieldResolver;
 import org.inventivetalent.reflection.resolver.MethodResolver;
 import org.inventivetalent.reflection.resolver.minecraft.NMSClassResolver;
 import org.inventivetalent.reflection.resolver.minecraft.OBCClassResolver;
-import org.mcstats.MetricsLite;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -61,13 +61,7 @@ public class SaturationPreview extends JavaPlugin implements Listener {
 	public void onEnable() {
 		Bukkit.getPluginManager().registerEvents(this, this);
 
-		try {
-			MetricsLite metrics = new MetricsLite(this);
-			if (metrics.start()) {
-				getLogger().info("Metrics started");
-			}
-		} catch (Exception e) {
-		}
+		new Metrics(this, 6505);
 	}
 
 	@EventHandler(priority = EventPriority.MONITOR)
