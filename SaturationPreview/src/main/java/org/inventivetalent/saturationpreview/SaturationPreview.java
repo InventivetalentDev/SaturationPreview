@@ -1,5 +1,6 @@
 package org.inventivetalent.saturationpreview;
 
+import org.bstats.bukkit.Metrics;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -20,7 +21,6 @@ import org.inventivetalent.reflection.resolver.FieldResolver;
 import org.inventivetalent.reflection.resolver.MethodResolver;
 import org.inventivetalent.reflection.resolver.minecraft.NMSClassResolver;
 import org.inventivetalent.reflection.resolver.minecraft.OBCClassResolver;
-import org.mcstats.MetricsLite;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -35,7 +35,7 @@ public class SaturationPreview extends JavaPlugin implements Listener {
 
 	static Class<?> ItemStack                 = nmsClassResolver.resolveSilent("ItemStack");
 	static Class<?> Item                      = nmsClassResolver.resolveSilent("Item");
-	static Class<?> ItemFood                  = nmsClassResolver.resolveSilent("ItemFood");
+	static Class<?> FoodInfo                  = nmsClassResolver.resolveSilent("FoodInfo");
 	static Class<?> EntityPlayer              = nmsClassResolver.resolveSilent("EntityPlayer");
 	static Class<?> PlayerConnection          = nmsClassResolver.resolveSilent("PlayerConnection");
 	static Class<?> PacketPlayOutUpdateHealth = nmsClassResolver.resolveSilent("PacketPlayOutUpdateHealth");
@@ -45,7 +45,8 @@ public class SaturationPreview extends JavaPlugin implements Listener {
 	static MethodResolver CraftItemStackMethodResolver   = new MethodResolver(CraftItemStack);
 	static MethodResolver CraftPlayerMethodResolver      = new MethodResolver(CraftPlayer);
 	static MethodResolver ItemStackMethodResolver        = new MethodResolver(ItemStack);
-	static MethodResolver ItemFoodMethodResolver         = new MethodResolver(ItemFood);
+	static MethodResolver ItemMethodResolver             = new MethodResolver(Item);
+	static MethodResolver FoodInfoMethodResolver         = new MethodResolver(FoodInfo);
 	static MethodResolver PlayerConnectionMethodResolver = new MethodResolver(PlayerConnection);
 
 	static FieldResolver EntityPlayerFieldResolver = new FieldResolver(EntityPlayer);
@@ -60,13 +61,7 @@ public class SaturationPreview extends JavaPlugin implements Listener {
 	public void onEnable() {
 		Bukkit.getPluginManager().registerEvents(this, this);
 
-		try {
-			MetricsLite metrics = new MetricsLite(this);
-			if (metrics.start()) {
-				getLogger().info("Metrics started");
-			}
-		} catch (Exception e) {
-		}
+		new Metrics(this, 6505);
 	}
 
 	@EventHandler(priority = EventPriority.MONITOR)
@@ -77,8 +72,9 @@ public class SaturationPreview extends JavaPlugin implements Listener {
 		if (itemStack != null && itemStack.getAmount() > 0 && itemStack.getType() != Material.AIR) {
 			Object nmsItemStack = CraftItemStackMethodResolver.resolveWrapper("asNMSCopy").invokeSilent(null, itemStack);
 			Object nmsItem = ItemStackMethodResolver.resolveWrapper("getItem").invokeSilent(nmsItemStack);
-			if (ItemFood.isAssignableFrom(nmsItem.getClass())) {
-				startTask(event.getPlayer(), (int) ItemFoodMethodResolver.resolveWrapper("getNutrition").invokeSilent(nmsItem, nmsItemStack));
+			Object foodInfo = ItemMethodResolver.resolveWrapper("getFoodInfo").invokeSilent(nmsItem);
+			if (foodInfo != null) {
+				startTask(event.getPlayer(), (int) FoodInfoMethodResolver.resolveWrapper("getNutrition", "a").invokeSilent(foodInfo));
 			}
 		}
 	}
