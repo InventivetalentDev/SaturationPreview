@@ -33,12 +33,13 @@ public class SaturationPreview extends JavaPlugin implements Listener {
 	static NMSClassResolver nmsClassResolver = new NMSClassResolver();
 	static OBCClassResolver obcClassResolver = new OBCClassResolver();
 
-	static Class<?> ItemStack                 = nmsClassResolver.resolveSilent("ItemStack");
-	static Class<?> Item                      = nmsClassResolver.resolveSilent("Item");
-	static Class<?> FoodInfo                  = nmsClassResolver.resolveSilent("FoodInfo");
-	static Class<?> EntityPlayer              = nmsClassResolver.resolveSilent("EntityPlayer");
-	static Class<?> PlayerConnection          = nmsClassResolver.resolveSilent("PlayerConnection");
-	static Class<?> PacketPlayOutUpdateHealth = nmsClassResolver.resolveSilent("PacketPlayOutUpdateHealth");
+	static Class<?> ItemStack                 = nmsClassResolver.resolveSilent("ItemStack", "world.item.ItemStack");
+	static Class<?> Item                      = nmsClassResolver.resolveSilent("Item", "world.item.Item");
+	static Class<?> FoodInfo                  = nmsClassResolver.resolveSilent("FoodInfo", "world.food.FoodInfo");
+	static Class<?> EntityPlayer              = nmsClassResolver.resolveSilent("EntityPlayer", "server.level.EntityPlayer");
+	static Class<?> PlayerConnection          = nmsClassResolver.resolveSilent("PlayerConnection", "server.network.PlayerConnection");
+	static Class<?> PacketPlayOutUpdateHealth = nmsClassResolver.resolveSilent("PacketPlayOutUpdateHealth", "network.protocol.game.PacketPlayOutUpdateHealth");
+
 	static Class<?> CraftItemStack            = obcClassResolver.resolveSilent("inventory.CraftItemStack");
 	static Class<?> CraftPlayer               = obcClassResolver.resolveSilent("entity.CraftPlayer");
 

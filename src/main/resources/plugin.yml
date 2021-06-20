@@ -1,3 +1,3 @@
 # Placeholder for PluginAnnotations
 version: ${project.version}
-api-version: '1.13'
+api-version: '1.17'
